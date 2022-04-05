@@ -1,0 +1,112 @@
+﻿<Window x:Class="BatchRDLReportDeploy.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BatchRDLReportDeploy"
+        mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="Deploy Report" Height="540" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="340" />
+            <RowDefinition Height="100" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="120" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Local Report Folder:" Style="{StaticResource Header}" Margin="10 10" Height="40" ></TextBlock>
+            <TextBox  x:Name="tbLocalPath" Grid.Column="1" Text=""   FontSize="16" VerticalContentAlignment="Center" Height="40" ></TextBox>
+            <Button Grid.Column="2" x:Name="OpenPath" Content="Select Path " HorizontalAlignment="Right" Click="OpenPath_Click" Height="40" Margin="0 0 10 0"></Button>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <DataGrid Grid.Row="0" Grid.Column="0"
+                ItemsSource="{Binding ReportServers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding SelectedReportServer,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                      SelectionMode="Single"  IsSynchronizedWithCurrentItem="True" CanUserReorderColumns="False" CanUserResizeRows="False"
+                          AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible"
+                         
+                          HorizontalScrollBarVisibility="Visible"   FontSize="14">
+
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn Header="Deploy?" Binding="{Binding EnableDeploy, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+                    <DataGridTextColumn Header="Report Server URL" Binding="{Binding ServerUrl}" IsReadOnly="False" Width="250"
+                                    SortMemberPath="ServerUrl" SortDirection="Ascending" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+
+            <Grid Grid.Column="1">
+                <Border x:Name="RoundedCorner" BorderThickness="0" CornerRadius="6" Background="Gray" />
+
+                <DataGrid Name="DataGridLog" BorderBrush="{x:Null}"
+                          ItemsSource="{Binding DisplayLogs, Mode=OneWay, NotifyOnSourceUpdated=True}"
+                          AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible"
+                          HorizontalScrollBarVisibility="Visible" Panel.ZIndex="1" IsReadOnly="True" FontSize="14"
+                           SelectionMode="Single" 
+                          IsSynchronizedWithCurrentItem="True" CanUserReorderColumns="False" CanUserResizeRows="False">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="{Binding BackgroundBrush}"/>
+                            <Setter Property="FontWeight" Value="{Binding FontWeight}"/>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.OpacityMask>
+                        <VisualBrush Visual="{Binding ElementName=RoundedCorner}" />
+                    </DataGrid.OpacityMask>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Logs" Binding="{Binding Path=Description}" Width="*" />
+                    </DataGrid.Columns>
+                    <DataGrid.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="WhiteSmoke" Offset="0.0" />
+                            <GradientStop Color="Gainsboro" Offset="0.5" />
+                            <GradientStop Color="WhiteSmoke" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </DataGrid.Background>
+                </DataGrid>
+            </Grid>
+        </Grid>
+
+        <StackPanel
+            Grid.Row="2"
+            Orientation="Horizontal" HorizontalAlignment="Left" Height="60" VerticalAlignment="Top" Margin="0 10 0 0">
+            <CheckBox x:Name="cbCredintial" Width="20" Height="20" Margin="20" Checked="cbCredintial_Checked" Unchecked="cbCredintial_Unchecked"></CheckBox>
+            <TextBlock Text="Default Credential" Height="20" HorizontalAlignment="Center" ></TextBlock>
+            <Grid x:Name="gridCredential" Width="300" Height="60" Margin="20 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="200" />
+                </Grid.ColumnDefinitions>
+
+                <Label Content="UserName:" Grid.Row="0" Grid.Column="0"></Label>
+                <Label Content="Password:" Grid.Row="1" Grid.Column="0"></Label>
+
+                <TextBox x:Name="tbUserName" Grid.Row="0" Grid.Column="1"></TextBox>
+                <TextBox x:Name="tbPassword" Grid.Row="1" Grid.Column="1"></TextBox>
+
+            </Grid>
+            
+            <Button x:Name="btDeploy" Content="Deploy" Height="40" Click="btDeploy_Click" Margin="150 0 0 0"/>
+            <Button x:Name="btCancel" Margin="20 0 0 0"   Content="Cancel" Height="40" Click="btCancel_Click"/>
+    </StackPanel>
+
+        <TextBlock x:Name="lbDeployResult" Grid.Row="3" Text="" Margin="20 -20 0 0" ></TextBlock>
+    </Grid>
+</Window>
